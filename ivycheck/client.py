@@ -2,9 +2,11 @@ import os
 import requests
 
 
-# https://ivycheck-backend.onrender.com/
+#
 class IvyClient:
-    def __init__(self, api_key, base_url="http://localhost:8000/") -> None:
+    def __init__(
+        self, api_key, base_url="https://ivycheck-backend.onrender.com/"
+    ) -> None:
         self.base_url = base_url
 
         if api_key is None:
