@@ -2,10 +2,9 @@ import os
 import requests
 
 
+# https://ivycheck-backend.onrender.com/
 class IvyClient:
-    def __init__(
-        self, api_key, base_url="https://ivycheck-backend.onrender.com/"
-    ) -> None:
+    def __init__(self, api_key, base_url="http://localhost:8000/") -> None:
         self.base_url = base_url
 
         if api_key is None:
@@ -18,7 +17,15 @@ class IvyClient:
 
         self.api_key = api_key
 
-    def complete(self, slug, field_values, stage=None, version=None):
+    def complete(
+        self,
+        slug,
+        field_values,
+        stage=None,
+        version=None,
+        stream=False,
+        raw_response=False,
+    ):
         """Call to openai completion API."""
 
         url = self.base_url + "api/v1/complete"
@@ -30,11 +37,15 @@ class IvyClient:
             "stage": stage,
             "version": version,
             "field_values": field_values,
+            "stream": stream,
+            "raw_response": raw_response,
         }
 
-        response = requests.post(url, headers=headers, json=data)
-        
-        return response.json()
+        # handle streaming vs non-streaming here.
+        # if streaming: json.loads(response.text) or response.json()
+        response = requests.post(url, headers=headers, json=data, stream=stream)
+
+        return response
 
     def check_endpoint_health(self):
         """Check the health of the endpoint."""
