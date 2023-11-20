@@ -31,6 +31,8 @@ chat_response = ivy.complete(
     field_values={"user_input": "It's raining cats and dogs!"},
     # stage="production",
     version=2,  # specify stage or version
+    stream=False,  # get streaming response
+    raw_response=False,  # get full model response or only the response message.
 )
 
 print(chat_response["message"])  # ¡Está lloviendo perros y gatos! ...
