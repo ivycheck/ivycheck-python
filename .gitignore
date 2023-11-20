@@ -3,6 +3,7 @@ __pycache__/
 
 # Environments
 .venv
+launch.json
 
 # System files
 .DS_Store
@@ -12,3 +13,6 @@ build/
 dist/
 packaging-env
 *.egg-info/
+
+# test
+tests/test_openai.py
