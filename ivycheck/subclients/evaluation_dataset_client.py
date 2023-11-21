@@ -3,7 +3,10 @@ from typing import Optional, Dict, List
 
 
 class EvaluationDatasetClient:
-    def create_evaluation_dataset(
+    def __init__(self, client):
+        self.client = client
+
+    def create(
         self,
         test_case_dataset_id: str,
         description: Optional[str] = None,
@@ -16,13 +19,18 @@ class EvaluationDatasetClient:
             aggregate_results=aggregate_results,
             config=config,
         )
-        return self._make_request("POST", "/", data=evaluation_dataset_data.dict())
+        endpoint = f"/evaluation_datasets/"
+        return self.client._make_request(
+            "POST",
+            endpoint,
+            json=evaluation_dataset_data.model_dump(exclude_unset=True),
+        )
 
-    def read_evaluation_dataset(self, evaluation_dataset_id: str) -> Dict:
-        endpoint = f"/{evaluation_dataset_id}"
-        return self._make_request("GET", endpoint)
+    def read(self, evaluation_dataset_id: str) -> Dict:
+        endpoint = f"/evaluation_datasets/{evaluation_dataset_id}"
+        return self.client._make_request("GET", endpoint)
 
-    def update_evaluation_dataset(
+    def update(
         self,
         evaluation_dataset_id: str,
         test_case_dataset_id: str,
@@ -36,13 +44,15 @@ class EvaluationDatasetClient:
             aggregate_results=aggregate_results,
             config=config,
         )
-        endpoint = f"/{evaluation_dataset_id}"
-        return self._make_request("PUT", endpoint, data=evaluation_dataset_data.dict())
+        endpoint = f"/evaluation_datasets/{evaluation_dataset_id}"
+        return self.client._make_request(
+            "PUT", endpoint, json=evaluation_dataset_data.dict()
+        )
 
-    def delete_evaluation_dataset(self, evaluation_dataset_id: str) -> Dict:
-        endpoint = f"/{evaluation_dataset_id}"
-        return self._make_request("DELETE", endpoint)
+    def delete(self, evaluation_dataset_id: str) -> Dict:
+        endpoint = f"/evaluation_datasets/{evaluation_dataset_id}"
+        return self.client._make_request("DELETE", endpoint)
 
-    def read_evaluation_datasets_by_org(self) -> List[Dict]:
-        endpoint = "/by_org/"
-        return self._make_request("GET", endpoint)
+    def read_by_org(self) -> List[Dict]:
+        endpoint = "/evaluation_datasets/by_org/"
+        return self.client._make_request("GET", endpoint)

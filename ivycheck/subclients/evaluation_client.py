@@ -6,12 +6,12 @@ class EvaluationClient:
     def __init__(self, client):
         self.client = client
 
-    def create_evaluation(
+    def create(
         self,
         test_case_id: str,
         evaluation_dataset_id: str,
-        evaluation_result: Dict,
         output: Dict,
+        evaluation_result: Optional[Dict] = None,
         config: Optional[Dict] = None,
     ) -> Dict:
         evaluation_data = EvaluationCreate(
@@ -21,14 +21,16 @@ class EvaluationClient:
             evaluation_result=evaluation_result,
             output=output,
         )
-        return self._make_request(
-            "POST", "/", data=evaluation_data.model_dump(exclude_none=True)
+        endpoint = f"/evaluations"
+        return self.client._make_request(
+            "POST", endpoint, json=evaluation_data.model_dump(exclude_none=True)
         )
 
-    def read_evaluation(self, evaluation_id: str) -> Dict:
-        return self._make_request("GET", f"/{evaluation_id}")
+    def read(self, evaluation_id: str) -> Dict:
+        endpoint = f"/evaluations/{evaluation_id}"
+        return self.client._make_request("GET", endpoint)
 
-    def update_evaluation(
+    def update(
         self,
         evaluation_id: str,
         test_case_id: str,
@@ -44,9 +46,11 @@ class EvaluationClient:
             evaluation_result=evaluation_result,
             output=output,
         )
-        return self._make_request(
-            "PUT", f"/{evaluation_id}", data=evaluation_data.dict()
+        endpoint = f"/evaluations/{evaluation_id}"
+        return self.client._make_request(
+            "PUT", endpoint, json=evaluation_data.model_dump()
         )
 
-    def delete_evaluation(self, evaluation_id: str) -> Dict:
-        return self._make_request("DELETE", f"/{evaluation_id}")
+    def delete(self, evaluation_id: str) -> Dict:
+        endpoint = f"/evaluations/{evaluation_id}"
+        return self.client._make_request("DELETE", endpoint)

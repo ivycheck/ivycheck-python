@@ -35,7 +35,9 @@ class TestCaseUpdate(TestCaseCreate):
 # Pydantic models based on the backend models
 class EvaluationBase(BaseModel):
     config: Optional[Dict] = None
-    evaluation_result: Dict
+    evaluation_result: Optional[
+        Dict
+    ] = None  # maybe remove here. This should be filled by ivycheck
     output: Dict
     test_case_id: str
     evaluation_dataset_id: str

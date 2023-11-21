@@ -30,8 +30,8 @@ class TestDatasetClient:
             "POST", "/test_case_datasets/", json=validated_data
         )
 
-    def delete(self, testcasedataset_id: str):
-        endpoint = f"/test_case_datasets/{testcasedataset_id}"
+    def delete(self, testdataset_id: str):
+        endpoint = f"/test_case_datasets/{testdataset_id}"
         return self.client._make_request("DELETE", endpoint)
 
     def update(

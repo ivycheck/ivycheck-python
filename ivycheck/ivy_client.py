@@ -2,6 +2,8 @@ import os
 import requests
 from .subclients.test_case_client import TestCaseClient
 from .subclients.test_dataset_client import TestDatasetClient
+from .subclients.evaluation_client import EvaluationClient
+from .subclients.evaluation_dataset_client import EvaluationDatasetClient
 
 
 # https://ivycheck-backend.onrender.com/
@@ -35,6 +37,8 @@ class IvyClient:
         # Initialie the differen subclients
         self.TestDataset = TestDatasetClient(self)
         self.TestCase = TestCaseClient(self)
+        self.Evaluation = EvaluationClient(self)
+        self.EvaluationDataset = EvaluationDatasetClient(self)
 
     def _make_request(self, method: str, endpoint: str, **kwargs):
         # Internal helper method to make requests
