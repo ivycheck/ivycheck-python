@@ -28,6 +28,23 @@ class IvyClient:
 
         self.base_url = self.base_url.rstrip("/")
 
+        # Initialize a session object for connection pooling and session-wide configurations
+        self.session = requests.Session()
+        self.session.headers.update({"Authorization": f"Bearer {self.api_key}"})
+
+        # Initialie the differen subclients
+        self.TestDataset = TestDataset(self)
+
+    def _make_request(self, method: str, endpoint: str, **kwargs):
+        # Internal helper method to make requests
+        url = f"{self.base_url}{endpoint}"
+        response = self.session.request(method, url, **kwargs)
+
+        if response.ok:
+            return response.json() if not kwargs.get("stream", False) else response
+        else:
+            response.raise_for_status()
+
     def complete(
         self,
         slug,
@@ -39,10 +56,6 @@ class IvyClient:
     ):
         """Call to openai completion API."""
 
-        url = self.base_url + "api/v1/complete"
-
-        headers = {"Authorization": f"Bearer {self.api_key}"}
-
         data = {
             "slug": slug,
             "stage": stage,
@@ -52,24 +65,18 @@ class IvyClient:
             "raw_response": raw_response,
         }
 
-        # handle streaming vs non-streaming here.
-        # if streaming: json.loads(response.text) or response.json()
-        response = requests.post(url, headers=headers, json=data, stream=stream)
-
-        return response
+        return self._make_request("POST", "/api/v1/complete", json=data, stream=stream)
 
     def check_endpoint_health(self):
         """Check the health of the endpoint."""
+        return self._make_request("GET", "/api/v1/health")
 
-        url = self.base_url + "api/v1/health"
 
-        headers = {"Authorization": f"Bearer {self.api_key}"}
+class TestDataset:
+    def __init__(self, client):
+        self.client = client
 
-        response = requests.get(url, headers=headers)
-
-        return response.json()
-
-    def create_test_case_dataset(
+    def create(
         self,
         prompt_id: Optional[str] = None,
         test_config: Optional[Dict] = None,
@@ -87,21 +94,15 @@ class IvyClient:
             exclude_none=True
         )  # Exclude fields that are None
 
-        headers = {"Authorization": f"Bearer {self.api_key}"}
+        return self.client._make_request(
+            "POST", "/test_case_datasets/", json=validated_data
+        )
 
-        url = self.base_url.rstrip("/") + "/test_case_datasets/"
-
-        response = requests.post(url, headers=headers, json=validated_data)
-        if response.status_code == 200:
-            return response.json()
-        else:
-            response.raise_for_status()
-
-    def delete_test_dataset():
+    def delete():
         pass
 
-    def update_test_dataset():
+    def update():
         pass
 
-    def read_test_dataset():
+    def read():
         pass

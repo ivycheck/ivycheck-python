@@ -8,10 +8,10 @@ from ivycheck.client import IvyClient
 ivy = IvyClient(api_key=os.environ["IVYCHECK_API_KEY"])
 
 # Call the `create_test_case_dataset` method with dummy arguments
-dataset_response = ivy.create_test_case_dataset(
-    prompt_id="7a89104c-0d07-4396-a144-21c0c096622a",  
+dataset_response = ivy.TestDataset.create(
+    prompt_id="7a89104c-0d07-4396-a144-21c0c096622a",
     test_config=None,
-    name="Dummy Test Case Dataset",
+    name="Dummy Test Case Dataset 2",
     description="This is a dummy description for a test case dataset",
 )
 
