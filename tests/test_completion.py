@@ -1,5 +1,5 @@
 import os
-from ivycheck.client import IvyClient
+from ivycheck.ivy_client import IvyClient
 
 ivy = IvyClient(api_key=os.environ["IVYCHECK_API_KEY"])
 

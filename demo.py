@@ -1,5 +1,5 @@
 import os, json
-from ivycheck.client import IvyClient
+from ivycheck.ivy_client import IvyClient
 
 # set your API key as an environment variable
 # export IVYCHECK_API_KEY=<your API key> or pass to constructor
