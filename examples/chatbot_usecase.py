@@ -10,8 +10,17 @@ test_dataset = ivy.TestDataset.create(
     project_id="7a89104c-0d07-4396-a144-21c0c096622a",  # Admin Org
     # project_id="12caf8c1-5bc9-4fb6-827e-ffecff35afb2",  # Test Org
     eval_llm="gpt-4",
-    name="Test ChatBot 5",
-    description="Test Dataset 5",
+    name="Test ChatBot 6",
+    description="Test Dataset 6",
+    test_config={
+        "rubrics": [
+            {
+                "name": "Politeness",
+                "active": True,
+                "description": "Is the response polite?",
+            }
+        ]
+    },
 )
 
 # Add test cases to the dataset
@@ -51,4 +60,4 @@ for test_case in test_dataset["test_cases"]:
         output={
             "response": response
         },  # is this the right field? should it be named differently?
-    )   
+    )
