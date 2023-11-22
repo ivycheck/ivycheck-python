@@ -3,14 +3,16 @@ from ivycheck.ivy_client import IvyClient
 
 # Set up your API key and base URL
 ivy = IvyClient(api_key=os.environ["IVYCHECK_API_KEY"])
+# ivy = IvyClient(api_key="ivy-mKK49805CjpJFyptQfiTaA")
 
 
 # Create a new test case dataset inside an existing project
 test_dataset = ivy.TestDataset.create(
-    project_id="7a89104c-0d07-4396-a144-21c0c096622a",
-    test_config={},
-    name="Test Chat Bot",
-    description="This is my first dataset.",
+    project_id="7a89104c-0d07-4396-a144-21c0c096622a",  # Admin Org
+    # project_id="12caf8c1-5bc9-4fb6-827e-ffecff35afb2",  # Test Org
+    eval_llm="gpt-4",
+    name="Test ChatBot 4",
+    description="Test Dataset 3",
 )
 
 # Add test cases to the dataset
@@ -26,14 +28,13 @@ ivy.TestCase.create(
     segments={"customer": "ChatBotUser", "difficulty": "hard"},
 )
 
+
 # Retrieve the test cases
-test_dataset = ivy.TestDataset.read(
-    testcasedataset_id="6df08c00-97e2-4792-8166-ef285923ae45"
-)
+test_dataset = ivy.TestDataset.read(testcasedataset_id=test_dataset["id"])
 
 # Create an evaluation dataset / Can we automate this? Do we need this?
 evals = ivy.EvaluationDataset.create(
-    test_case_dataset_id=test_dataset["id"], description="Testing Evaluations"
+    test_case_dataset_id=test_dataset["id"], description="Prompt Version 1"
 )
 
 # iterate over your test_cases and log the results to ivycheck

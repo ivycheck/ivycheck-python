@@ -1,5 +1,6 @@
 from ..schemas import TestCaseDatasetCreate, TestCaseDatasetUpdate
 from typing import Optional, Dict
+from ..helperfunctions import get_llm_config_id_from_name
 
 
 class TestDatasetClient:
@@ -9,11 +10,14 @@ class TestDatasetClient:
     def create(
         self,
         project_id: str,
+        eval_llm: str = "gpt-4",
         test_config: Optional[Dict] = {},
         name: Optional[str] = None,
         description: Optional[str] = None,
     ):
         assert project_id is not None, "Project Id is required."
+
+        test_config["eval_llm"] = eval_llm  # get_llm_config_id_from_name(eval_llm)
 
         # Use the Pydantic model to validate the input
         dataset_info = TestCaseDatasetCreate(

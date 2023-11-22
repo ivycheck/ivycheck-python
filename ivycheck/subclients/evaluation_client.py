@@ -21,7 +21,7 @@ class EvaluationClient:
             evaluation_result=evaluation_result,
             output=output,
         )
-        endpoint = f"/evaluations"
+        endpoint = f"/evaluations/"
         return self.client._make_request(
             "POST", endpoint, json=evaluation_data.model_dump(exclude_none=True)
         )
