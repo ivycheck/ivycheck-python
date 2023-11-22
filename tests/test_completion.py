@@ -1,5 +1,5 @@
 import os
-from ivycheck.client import IvyClient
+from ivycheck.ivy_client import IvyClient
 
 ivy = IvyClient(api_key=os.environ["IVYCHECK_API_KEY"])
 
@@ -12,4 +12,5 @@ chat_response = ivy.complete(
     raw_response=False,  # get full model response or only the response message.
 )
 
+assert type(chat_response.text) is str
 print(chat_response.text)  # ¡Está lloviendo perros y gatos! ...
