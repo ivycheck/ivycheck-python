@@ -1,6 +1,5 @@
 from ..schemas import TestCaseDatasetCreate, TestCaseDatasetUpdate
 from typing import Optional, Dict
-from ..helperfunctions import get_llm_config_id_from_name
 
 
 class TestDatasetClient:

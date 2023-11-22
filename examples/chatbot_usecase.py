@@ -5,14 +5,13 @@ from ivycheck.ivy_client import IvyClient
 ivy = IvyClient(api_key=os.environ["IVYCHECK_API_KEY"])
 # ivy = IvyClient(api_key="ivy-mKK49805CjpJFyptQfiTaA")
 
-
 # Create a new test case dataset inside an existing project
 test_dataset = ivy.TestDataset.create(
     project_id="7a89104c-0d07-4396-a144-21c0c096622a",  # Admin Org
     # project_id="12caf8c1-5bc9-4fb6-827e-ffecff35afb2",  # Test Org
     eval_llm="gpt-4",
-    name="Test ChatBot 4",
-    description="Test Dataset 3",
+    name="Test ChatBot 5",
+    description="Test Dataset 5",
 )
 
 # Add test cases to the dataset
@@ -46,10 +45,10 @@ for test_case in test_dataset["test_cases"]:
     response = "Sorry, I don't know how to help with that."
 
     # log the response to ivycheck
-    ivy.Evaluation.create(
+    ivy.Evaluation.create_and_run(
         evaluation_dataset_id=evals["id"],
         test_case_id=test_case["id"],
         output={
             "response": response
         },  # is this the right field? should it be named differently?
-    )
+    )   

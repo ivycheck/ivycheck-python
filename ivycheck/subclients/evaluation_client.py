@@ -6,7 +6,7 @@ class EvaluationClient:
     def __init__(self, client):
         self.client = client
 
-    def create(
+    def create_and_run(
         self,
         test_case_id: str,
         evaluation_dataset_id: str,
@@ -21,7 +21,7 @@ class EvaluationClient:
             evaluation_result=evaluation_result,
             output=output,
         )
-        endpoint = f"/evaluations/"
+        endpoint = f"/evaluations/create_and_run/"
         return self.client._make_request(
             "POST", endpoint, json=evaluation_data.model_dump(exclude_none=True)
         )
