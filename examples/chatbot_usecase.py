@@ -3,7 +3,6 @@ from ivycheck.ivy_client import IvyClient
 
 # Set up your API key and base URL
 ivy = IvyClient(api_key=os.environ["IVYCHECK_API_KEY"])
-# ivy = IvyClient(api_key="ivy-mKK49805CjpJFyptQfiTaA")
 
 # Create a new test case dataset inside an existing project
 test_dataset = ivy.TestDataset.create(
