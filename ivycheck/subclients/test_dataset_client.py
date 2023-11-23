@@ -1,5 +1,6 @@
 from ..schemas import TestCaseDatasetCreate, TestCaseDatasetUpdate
 from typing import Optional, Dict, List
+from ivycheck.evaluator import Evaluator
 
 
 class TestDatasetClient:
@@ -41,6 +42,15 @@ class TestDatasetClient:
         self.test_config = response.get("test_config")
 
         return self
+
+    def evaluate(self, evaluator_description: str = None):
+        # Create an Evaluator object for this test dataset instance
+        evaluator = Evaluator.create(
+            self.client,
+            test_dataset_id=self.id,
+            evaluator_description=evaluator_description,
+        )
+        return evaluator
 
     def add_test_case(
         self,

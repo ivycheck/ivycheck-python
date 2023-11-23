@@ -1,4 +1,3 @@
-from ivycheck.ivy_client import IvyClient
 from typing import Optional, Dict
 
 
@@ -23,7 +22,7 @@ class Evaluator:
     @classmethod
     def create(
         cls,
-        client: IvyClient,
+        client,  # is of type IvyClient but this causes a circular import atm
         test_dataset_id: str,
         segments: Optional[Dict] = None,
         evaluator_description: Optional[str] = None,
