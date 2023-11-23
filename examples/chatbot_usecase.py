@@ -1,5 +1,6 @@
 import os
 from ivycheck.ivy_client import IvyClient
+from ivycheck.evaluator import Evaluator
 
 # Set up your API key and base URL
 ivy = IvyClient(api_key=os.environ["IVYCHECK_API_KEY"])
@@ -9,13 +10,12 @@ test_dataset = ivy.TestDataset.create(
     project_id="7a89104c-0d07-4396-a144-21c0c096622a",  # Admin Org
     # project_id="12caf8c1-5bc9-4fb6-827e-ffecff35afb2",  # Test Org
     eval_llm="gpt-4",
-    name="Test ChatBot 6",
-    description="Test Dataset 6",
+    name="Test ChatBot 7",
+    description="Test Dataset 7",
     test_config={
         "rubrics": [
             {
                 "name": "Politeness",
-                "active": True,
                 "description": "Is the response polite?",
             }
         ]
@@ -35,28 +35,15 @@ ivy.TestCase.create(
     segments={"customer": "ChatBotUser", "difficulty": "hard"},
 )
 
+# Create an Evaluator object for a given test dataset with an optional segments filter
+evaluator = Evaluator.create(ivy, test_dataset_id=test_dataset["id"])
 
-# Retrieve the test cases
-test_dataset = ivy.TestDataset.read(testcasedataset_id=test_dataset["id"])
+for test_case, evaluate in evaluator.test_case_iterator():
+    # Custom logic to execute the test case using the test case's properties
+    user_input = test_case["input"]["user_input"]
 
-# Create an evaluation dataset / Can we automate this? Do we need this?
-evals = ivy.EvaluationDataset.create(
-    test_case_dataset_id=test_dataset["id"], description="Prompt Version 1"
-)
+    # Implement test case execution and response generation
+    response = "Sorry, I don't know how to help with that. But I can help you with other things."
 
-# iterate over your test_cases and log the results to ivycheck
-for test_case in test_dataset["test_cases"]:
-    # use your custom logic to execute the test case
-    test_case["input"]["user_input"]  # "How can I cancel my subscription?"
-
-    # let's create a simple response
-    response = "Sorry, I don't know how to help with that."
-
-    # log the response to ivycheck
-    ivy.Evaluation.create_and_run(
-        evaluation_dataset_id=evals["id"],
-        test_case_id=test_case["id"],
-        output={
-            "response": response
-        },  # is this the right field? should it be named differently?
-    )
+    # Evaluate the response using the evaluate function provided by the iterator
+    evaluate(response)
