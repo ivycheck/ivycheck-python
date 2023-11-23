@@ -1,5 +1,5 @@
 from ..schemas import TestCaseDatasetCreate, TestCaseDatasetUpdate
-from typing import Optional, Dict
+from typing import Optional, Dict, List
 
 
 class TestDatasetClient:
@@ -31,8 +31,45 @@ class TestDatasetClient:
             exclude_none=True
         )  # Exclude fields that are None
 
-        return self.client._make_request(
+        response = self.client._make_request(
             "POST", "/test_case_datasets/", json=validated_data
+        )
+
+        self.id = response["id"]
+        self.name = response.get("name")
+        self.description = response.get("description")
+        self.test_config = response.get("test_config")
+
+        return self
+
+    def add_test_case(
+        self,
+        input: Dict,
+        message_history: Optional[List] = None,
+        context: Optional[List] = None,
+        golden_answer: Optional[str] = None,
+        golden_context: Optional[List] = None,
+        segments: Optional[Dict] = None,
+        info: Optional[Dict] = None,
+    ):
+        """
+        Add a test case to this dataset.
+
+        Assuming this `self` instance already has a reference to the dataset_id
+        that we can use to link the test case to the dataset.
+        """
+        # Here, we assume self has an attribute `id` that stores the ID of the dataset.
+        # If this is not currently the case, you need to make sure each instance of
+        # TestDatasetClient has access to the dataset ID it's associated with.
+        return self.client.TestCase.create(
+            input=input,
+            dataset_id=self.id,  # Use the dataset ID from the instance.
+            message_history=message_history,
+            context=context,
+            golden_answer=golden_answer,
+            golden_context=golden_context,
+            segments=segments,
+            info=info,
         )
 
     def delete(self, testdataset_id: str):
@@ -73,3 +110,21 @@ class TestDatasetClient:
     def read_by_prompt(self, prompt_id: str):
         endpoint = f"/test_case_datasets/by_prompt/{prompt_id}"
         return self.client._make_request("GET", endpoint)
+
+    def load(self, testdataset_id: str):
+        """
+        Load an existing test dataset by its ID.
+
+        :param testdataset_id: The ID of the test dataset to load.
+        """
+        data = self.read(testdataset_id)
+
+        # Assuming 'data' contains all the information about the test dataset,
+        # including its ID, name, description, etc.
+        self.id = data["id"]
+        self.name = data.get("name")
+        self.description = data.get("description")
+        self.test_config = data.get("test_config")
+
+        # Return the TestDatasetClient instance for method chaining
+        return self

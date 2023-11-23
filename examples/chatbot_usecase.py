@@ -10,8 +10,8 @@ test_dataset = ivy.TestDataset.create(
     project_id="7a89104c-0d07-4396-a144-21c0c096622a",  # Admin Org
     # project_id="12caf8c1-5bc9-4fb6-827e-ffecff35afb2",  # Test Org
     eval_llm="gpt-4",
-    name="Test ChatBot 7",
-    description="Test Dataset 7",
+    name="Test ChatBot 8",
+    description="Test Dataset 8",
     rubrics=[
         {
             "name": "Politeness",
@@ -25,22 +25,24 @@ test_dataset = ivy.TestDataset.create(
 )
 
 # Add test cases to the dataset
-ivy.TestCase.create(
-    dataset_id=test_dataset["id"],
-    input={"user_input": "How can I cancel my subscription?"},
+test_dataset.add_test_case(
+    input={"user_input": "How can I cancel my subscription online?"},
     segments={"customer": "ChatBotUser", "difficulty": "easy"},
 )
 
-ivy.TestCase.create(
-    dataset_id=test_dataset["id"],
-    input={"user_input": "How much is the Pro Plan?"},
+test_dataset.add_test_case(
+    input={"user_input": "How much is the Premium Plan?"},
     segments={"customer": "ChatBotUser", "difficulty": "hard"},
 )
+
+# alternatively, you can create test cases directly using the TestCaseClient
+# ivy.TestCase.create(dataset_id=test_dataset["id"], input=...)
+
 
 # Create an Evaluator object for a given test dataset with an optional segments filter
 evaluator = Evaluator.create(
     ivy,
-    test_dataset_id=test_dataset["id"],
+    test_dataset_id=test_dataset.id,
     evaluator_description="ChatBot Evaluation 1",
 )
 
