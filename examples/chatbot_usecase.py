@@ -12,14 +12,16 @@ test_dataset = ivy.TestDataset.create(
     eval_llm="gpt-4",
     name="Test ChatBot 7",
     description="Test Dataset 7",
-    test_config={
-        "rubrics": [
-            {
-                "name": "Politeness",
-                "description": "Is the response polite?",
-            }
-        ]
-    },
+    rubrics=[
+        {
+            "name": "Politeness",
+            "description": "Is the response polite?",
+        },
+        {
+            "name": "Humour",
+            "description": "Is the response funny or entertaining?",
+        },
+    ],
 )
 
 # Add test cases to the dataset
@@ -36,7 +38,11 @@ ivy.TestCase.create(
 )
 
 # Create an Evaluator object for a given test dataset with an optional segments filter
-evaluator = Evaluator.create(ivy, test_dataset_id=test_dataset["id"])
+evaluator = Evaluator.create(
+    ivy,
+    test_dataset_id=test_dataset["id"],
+    evaluator_description="ChatBot Evaluation 1",
+)
 
 for test_case, evaluate in evaluator.test_case_iterator():
     # Custom logic to execute the test case using the test case's properties

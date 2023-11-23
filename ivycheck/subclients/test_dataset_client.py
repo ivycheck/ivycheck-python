@@ -10,13 +10,15 @@ class TestDatasetClient:
         self,
         project_id: str,
         eval_llm: str = "gpt-4",
-        test_config: Optional[Dict] = {},
+        rubrics: Optional[Dict[str, str]] = {},
         name: Optional[str] = None,
         description: Optional[str] = None,
     ):
         assert project_id is not None, "Project Id is required."
 
+        test_config = {}
         test_config["eval_llm"] = eval_llm  # get_llm_config_id_from_name(eval_llm)
+        test_config["rubrics"] = rubrics
 
         # Use the Pydantic model to validate the input
         dataset_info = TestCaseDatasetCreate(

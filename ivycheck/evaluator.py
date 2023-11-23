@@ -3,19 +3,32 @@ from typing import Optional, Dict
 
 
 class Evaluator:
-    def __init__(self, client, test_dataset_id: str, segments: Optional[Dict] = None):
+    def __init__(
+        self,
+        client,
+        test_dataset_id: str,
+        segments: Optional[Dict] = None,
+        evaluator_description: Optional[str] = None,
+    ):
         self.client = client
         self.test_dataset_id = test_dataset_id
         self.segments = segments
         self.evaluation_dataset_id = None
         self.test_cases = None
+        self.evaluator_description = (
+            evaluator_description if evaluator_description else "Automated Evaluation"
+        )
         self._prepare_evaluation_dataset()
 
     @classmethod
     def create(
-        cls, client: IvyClient, test_dataset_id: str, segments: Optional[Dict] = None
+        cls,
+        client: IvyClient,
+        test_dataset_id: str,
+        segments: Optional[Dict] = None,
+        evaluator_description: Optional[str] = None,
     ):
-        return cls(client, test_dataset_id, segments)
+        return cls(client, test_dataset_id, segments, evaluator_description)
 
     def _prepare_evaluation_dataset(self):
         # Reads the test dataset and creates the evaluation dataset
@@ -24,7 +37,7 @@ class Evaluator:
         )
         evals = self.client.EvaluationDataset.create(
             test_case_dataset_id=self.test_dataset_id,
-            description="Automated Evaluation",
+            description=self.evaluator_description,
         )
         self.evaluation_dataset_id = evals["id"]
         # Filter test_cases if segments is provided
