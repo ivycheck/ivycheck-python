@@ -11,7 +11,7 @@ class TestDatasetClient:
         self,
         project_id: str,
         eval_llm: str = "gpt-4",
-        rubrics: Optional[Dict[str, str]] = {},
+        rubrics: Optional[Dict[str, str]] = None,
         name: Optional[str] = None,
         description: Optional[str] = None,
     ):
@@ -19,7 +19,10 @@ class TestDatasetClient:
 
         test_config = {}
         test_config["eval_llm"] = eval_llm  # get_llm_config_id_from_name(eval_llm)
-        test_config["rubrics"] = rubrics
+        if rubrics is not None:
+            test_config["rubrics"] = rubrics
+        else:
+            test_config["rubrics"] = {}
 
         # Use the Pydantic model to validate the input
         dataset_info = TestCaseDatasetCreate(
@@ -43,11 +46,17 @@ class TestDatasetClient:
 
         return self
 
-    def evaluate(self, evaluator_description: str = None):
+    def evaluate(
+        self, evaluator_description: str = None, segments: Optional[Dict] = None
+    ):
+        if not self.id:
+            raise ValueError("Dataset ID is not set.")
+
         # Create an Evaluator object for this test dataset instance
         evaluator = Evaluator.create(
             self.client,
             test_dataset_id=self.id,
+            segments=segments,
             evaluator_description=evaluator_description,
         )
         return evaluator
@@ -65,8 +74,6 @@ class TestDatasetClient:
         """
         Add a test case to this dataset.
 
-        Assuming this `self` instance already has a reference to the dataset_id
-        that we can use to link the test case to the dataset.
         """
         # Here, we assume self has an attribute `id` that stores the ID of the dataset.
         # If this is not currently the case, you need to make sure each instance of
@@ -82,43 +89,45 @@ class TestDatasetClient:
             info=info,
         )
 
-    def delete(self, testdataset_id: str):
-        endpoint = f"/test_case_datasets/{testdataset_id}"
+    def delete(self, testdataset_id: str = None):
+        dataset_id = testdataset_id or self.id
+        if not dataset_id:
+            raise ValueError("Dataset ID has not been set or provided.")
+        endpoint = f"/test_case_datasets/{dataset_id}"
         return self.client._make_request("DELETE", endpoint)
 
     def update(
         self,
-        testcasedataset_id: str,
         test_config: Optional[Dict] = None,
         name: Optional[str] = None,
         description: Optional[str] = None,
+        testdataset_id: str = None,
     ):
-        # Internal validation with Pydantic
+        dataset_id = testdataset_id or self.id
+        if not self.id:
+            raise ValueError("Dataset ID has not been set.")
+
         test_case_data = TestCaseDatasetUpdate(
             test_config=test_config,
             name=name,
             description=description,
         )
-
-        # Serialize the data for the request and exclude any unset fields
         json_data = test_case_data.model_dump(exclude_unset=True)
+        endpoint = f"/test_case_datasets/{self.id}"
+        response = self.client._make_request("PUT", endpoint, json=json_data)
 
-        # The endpoint for updating a test case dataset
-        endpoint = f"/test_case_datasets/{testcasedataset_id}"
+        # Optionally, update the instance's internal state with the new data
+        self.name = name or self.name
+        self.description = description or self.description
+        self.test_config = test_config or self.test_config
 
-        # Make the API request
-        return self._make_request("PUT", endpoint, json=json_data)
+        return self
 
-    def read(self, testcasedataset_id: str):
-        endpoint = f"/test_case_datasets/{testcasedataset_id}"
-        return self.client._make_request("GET", endpoint)
-
-    def read_by_org(self):
-        endpoint = f"/test_case_datasets/by_org/"
-        return self.client._make_request("GET", endpoint)
-
-    def read_by_prompt(self, prompt_id: str):
-        endpoint = f"/test_case_datasets/by_prompt/{prompt_id}"
+    def read(self, testdataset_id: str = None):
+        dataset_id = testdataset_id or self.id
+        if not dataset_id:
+            raise ValueError("Dataset ID has not been set or provided.")
+        endpoint = f"/test_case_datasets/{dataset_id}"
         return self.client._make_request("GET", endpoint)
 
     def load(self, testdataset_id: str):

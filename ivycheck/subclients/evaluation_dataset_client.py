@@ -5,6 +5,7 @@ from typing import Optional, Dict, List
 class EvaluationDatasetClient:
     def __init__(self, client):
         self.client = client
+        self.id = None  # Initialize self.id to store the EvaluationDataset ID
 
     def create(
         self,
@@ -12,7 +13,9 @@ class EvaluationDatasetClient:
         description: Optional[str] = None,
         aggregate_results: Optional[Dict] = None,
         config: Optional[Dict] = None,
-    ) -> Dict:
+    ):
+        assert test_case_dataset_id is not None, "Test Case Dataset Id is required."
+
         evaluation_dataset_data = EvaluationDatasetCreate(
             test_case_dataset_id=test_case_dataset_id,
             description=description,
@@ -20,24 +23,44 @@ class EvaluationDatasetClient:
             config=config,
         )
         endpoint = f"/evaluation_datasets/"
-        return self.client._make_request(
+        response = self.client._make_request(
             "POST",
             endpoint,
             json=evaluation_dataset_data.model_dump(exclude_unset=True),
         )
 
-    def read(self, evaluation_dataset_id: str) -> Dict:
+        self.id = response[
+            "id"
+        ]  # Assume response contains the ID of the created evaluation dataset
+        # Optionally store other attributes as needed
+
+        return self  # Return self to allow method chaining
+
+    def load(self, evaluation_dataset_id: str):
+        data = self.read(evaluation_dataset_id)
+        self.id = data["id"]
+        # Load other relevant data into the instance as needed
+        return self  # Return self to allow method chaining
+
+    def read(self, evaluation_dataset_id: str = None):
+        evaluation_dataset_id = evaluation_dataset_id or self.id
+        if not evaluation_dataset_id:
+            raise ValueError("Evaluation Dataset ID has not been set or provided.")
         endpoint = f"/evaluation_datasets/{evaluation_dataset_id}"
         return self.client._make_request("GET", endpoint)
 
     def update(
         self,
-        evaluation_dataset_id: str,
         test_case_dataset_id: str,
         description: Optional[str] = None,
         aggregate_results: Optional[Dict] = None,
         config: Optional[Dict] = None,
-    ) -> Dict:
+        evaluation_dataset_id: str = None,
+    ):
+        evaluation_dataset_id = evaluation_dataset_id or self.id
+        if not evaluation_dataset_id:
+            raise ValueError("Evaluation Dataset ID has not been set or provided.")
+
         evaluation_dataset_data = EvaluationDatasetUpdate(
             test_case_dataset_id=test_case_dataset_id,
             description=description,
@@ -45,14 +68,23 @@ class EvaluationDatasetClient:
             config=config,
         )
         endpoint = f"/evaluation_datasets/{evaluation_dataset_id}"
-        return self.client._make_request(
-            "PUT", endpoint, json=evaluation_dataset_data.dict()
+        response = self.client._make_request(
+            "PUT", endpoint, json=evaluation_dataset_data.dict(exclude_unset=True)
         )
 
-    def delete(self, evaluation_dataset_id: str) -> Dict:
+        # Optionally update the instance's internal state
+
+        return self  # Return self to allow method chaining
+
+    def delete(self, evaluation_dataset_id: str = None):
+        evaluation_dataset_id = evaluation_dataset_id or self.id
+        if not evaluation_dataset_id:
+            raise ValueError("Evaluation Dataset ID has not been set or provided.")
         endpoint = f"/evaluation_datasets/{evaluation_dataset_id}"
         return self.client._make_request("DELETE", endpoint)
 
-    def read_by_org(self) -> List[Dict]:
+    def read_by_org(self):
+        # This method doesn't fit into a stateful design since it's about a collection
+        # It may be better suited to a separate collection management class
         endpoint = "/evaluation_datasets/by_org/"
         return self.client._make_request("GET", endpoint)
