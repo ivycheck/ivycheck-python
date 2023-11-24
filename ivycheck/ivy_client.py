@@ -1,5 +1,4 @@
-import os
-import requests
+import os, requests, httpx
 from .subclients.test_case_client import TestCaseClient
 from .subclients.test_dataset_client import TestDatasetClient
 from .subclients.evaluation_client import EvaluationClient
@@ -47,6 +46,15 @@ class IvyClient:
 
         response.raise_for_status()  # Raise an error for bad HTTP status codes
         return response.json()
+
+    async def async_make_request(self, method: str, endpoint: str, **kwargs):
+        url = f"{self.base_url}{endpoint}"
+        async with httpx.AsyncClient() as client:
+            client.headers = {"Authorization": f"Bearer {self.api_key}"}
+            response = await client.request(method, url, **kwargs)
+
+            response.raise_for_status()
+            return response.json()
 
     def complete(
         self,
