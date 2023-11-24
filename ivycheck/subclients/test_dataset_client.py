@@ -1,6 +1,7 @@
 from ..schemas import TestCaseDatasetCreate, TestCaseDatasetUpdate
 from typing import Optional, Dict, List
 from ivycheck.evaluator import Evaluator
+from ivycheck.helperfunctions import remove_keys_from_dict_list
 
 
 class TestDatasetClient:
@@ -128,7 +129,12 @@ class TestDatasetClient:
         if not dataset_id:
             raise ValueError("Dataset ID has not been set or provided.")
         endpoint = f"/test_case_datasets/{dataset_id}"
-        return self.client._make_request("GET", endpoint)
+        response = self.client._make_request("GET", endpoint)
+        # filter keys
+        response["test_cases"] = remove_keys_from_dict_list(
+            response["test_cases"], ["created_by", "updated_by", "owner_org"]
+        )
+        return response
 
     def load(self, testdataset_id: str):
         """
