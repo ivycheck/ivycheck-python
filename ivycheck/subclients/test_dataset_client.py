@@ -124,7 +124,7 @@ class TestDatasetClient:
 
         return self
 
-    def read(self, testdataset_id: str = None):
+    def _read(self, testdataset_id: str = None):
         dataset_id = testdataset_id or self.id
         if not dataset_id:
             raise ValueError("Dataset ID has not been set or provided.")
@@ -142,7 +142,7 @@ class TestDatasetClient:
 
         :param testdataset_id: The ID of the test dataset to load.
         """
-        data = self.read(testdataset_id)
+        data = self._read(testdataset_id)
 
         # Assuming 'data' contains all the information about the test dataset,
         # including its ID, name, description, etc.

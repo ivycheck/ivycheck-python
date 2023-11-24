@@ -42,7 +42,7 @@ class EvaluationClient:
 
         return self
 
-    def read(self, evaluation_id: str = None):
+    def _read(self, evaluation_id: str = None):
         evaluation_id = evaluation_id or self.id
         if not evaluation_id:
             raise ValueError("Evaluation ID has not been set or provided.")
@@ -101,7 +101,7 @@ class EvaluationClient:
         evaluation_id = evaluation_id or self.id
         if not evaluation_id:
             raise ValueError("Evaluation ID has not been set or provided.")
-        response = self.read(evaluation_id)
+        response = self._read(evaluation_id)
 
         self.id = response["id"]
         self.test_case_id = response.get("test_case_id")

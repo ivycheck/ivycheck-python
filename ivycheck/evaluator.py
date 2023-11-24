@@ -38,7 +38,9 @@ class Evaluator:
 
     def _prepare_evaluation_dataset(self):
         # Reads the test dataset and creates the evaluation dataset
-        test_dataset = self.client.TestDataset.read(testdataset_id=self.test_dataset_id)
+        test_dataset = self.client.TestDataset._read(
+            testdataset_id=self.test_dataset_id
+        )
         evals = self.client.EvaluationDataset.create(
             test_case_dataset_id=self.test_dataset_id,
             description=self.evaluator_description,

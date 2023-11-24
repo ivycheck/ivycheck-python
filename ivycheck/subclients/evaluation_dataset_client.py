@@ -37,12 +37,12 @@ class EvaluationDatasetClient:
         return self  # Return self to allow method chaining
 
     def load(self, evaluation_dataset_id: str):
-        data = self.read(evaluation_dataset_id)
+        data = self._read(evaluation_dataset_id)
         self.id = data["id"]
         # Load other relevant data into the instance as needed
         return self  # Return self to allow method chaining
 
-    def read(self, evaluation_dataset_id: str = None):
+    def _read(self, evaluation_dataset_id: str = None):
         evaluation_dataset_id = evaluation_dataset_id or self.id
         if not evaluation_dataset_id:
             raise ValueError("Evaluation Dataset ID has not been set or provided.")

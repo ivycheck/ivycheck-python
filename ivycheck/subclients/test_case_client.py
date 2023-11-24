@@ -39,13 +39,13 @@ class TestCaseClient:
 
     # Read a test case by its ID and load it into the instance
     def load(self, testcase_id: str):
-        data = self.read(testcase_id)
+        data = self._read(testcase_id)
         self.id = data["id"]
         # Load other relevant data into the instance as needed
         return self  # Return self to allow method chaining
 
     # Read a test case using the instance ID
-    def read(self, testcase_id: str = None):
+    def _read(self, testcase_id: str = None):
         testcase_id = testcase_id or self.id
         if not testcase_id:
             raise ValueError("Test Case ID has not been set or provided.")
