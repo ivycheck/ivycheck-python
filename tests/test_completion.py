@@ -12,5 +12,4 @@ chat_response = ivy.complete(
     raw_response=False,  # get full model response or only the response message.
 )
 
-assert type(chat_response.text) is str
-print(chat_response.text)  # ¡Está lloviendo perros y gatos! ...
+assert type(chat_response) is str

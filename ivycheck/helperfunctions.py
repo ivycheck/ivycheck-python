@@ -11,3 +11,9 @@ def remove_keys_from_dict_list(dict_list, keys_to_remove):
     """
     # Create a new list of dictionaries, where each dictionary has the undesired keys removed
     return [{k: v for k, v in d.items() if k not in keys_to_remove} for d in dict_list]
+
+
+class APIRequestError(Exception):
+    """Custom exception for API request errors."""
+
+    pass
