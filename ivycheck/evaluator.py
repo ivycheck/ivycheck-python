@@ -1,5 +1,11 @@
-from ivycheck.ivy_client import IvyClient
-from typing import Optional, Dict
+from __future__ import annotations
+
+# If you're on Python 3.7+, include this import at the top of the evaluator.py file
+from typing import Optional, Dict, TYPE_CHECKING
+
+# Import the client only if type checking
+if TYPE_CHECKING:
+    from ivycheck.ivy_client import IvyClient
 
 
 class Evaluator:
@@ -23,7 +29,7 @@ class Evaluator:
     @classmethod
     def create(
         cls,
-        client: IvyClient,
+        client: "IvyClient",  # is of type IvyClient but this causes a circular import atm
         test_dataset_id: str,
         segments: Optional[Dict] = None,
         evaluator_description: Optional[str] = None,
@@ -32,14 +38,12 @@ class Evaluator:
 
     def _prepare_evaluation_dataset(self):
         # Reads the test dataset and creates the evaluation dataset
-        test_dataset = self.client.TestDataset.read(
-            testcasedataset_id=self.test_dataset_id
-        )
+        test_dataset = self.client.TestDataset.read(testdataset_id=self.test_dataset_id)
         evals = self.client.EvaluationDataset.create(
             test_case_dataset_id=self.test_dataset_id,
             description=self.evaluator_description,
         )
-        self.evaluation_dataset_id = evals["id"]
+        self.evaluation_dataset_id = evals.id
         # Filter test_cases if segments is provided
         if self.segments:
             self.test_cases = [
