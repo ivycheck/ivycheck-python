@@ -44,6 +44,13 @@ class Evaluator:
         evals = self.client.EvaluationDataset.create(
             test_case_dataset_id=self.test_dataset_id,
             description=self.evaluator_description,
+            aggregate_results={
+                "status": "running",
+                "stats": {
+                    "completed": 0,
+                    "total": len(test_dataset.get("test_cases", [])),
+                },
+            },
         )
         self.evaluation_dataset_id = evals.id
         # Filter test_cases if segments is provided
