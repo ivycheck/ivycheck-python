@@ -4,6 +4,7 @@ from .subclients.test_case_client import TestCaseClient
 from .subclients.test_dataset_client import TestDatasetClient
 from .subclients.evaluation_client import EvaluationClient
 from .subclients.evaluation_dataset_client import EvaluationDatasetClient
+from ivycheck.helperfunctions import APIRequestError
 
 
 # https://ivycheck-backend.onrender.com/
@@ -41,12 +42,28 @@ class IvyClient:
         self.EvaluationDataset = EvaluationDatasetClient(self)
 
     def _make_request(self, method: str, endpoint: str, **kwargs):
-        # Internal helper method to make requests
+        # Internal helper method to make HTTP requests
         url = f"{self.base_url}{endpoint}"
         response = self.session.request(method, url, **kwargs)
 
-        response.raise_for_status()  # Raise an error for bad HTTP status codes
-        return response.json()
+        try:
+            response.raise_for_status()  # Raise an exception for HTTP errors
+            return response.json()
+        except requests.exceptions.HTTPError as http_err:
+            # Attempt to extract error details from the response
+            try:
+                # Try to parse the response as JSON and extract the 'detail' field
+                error_json = response.json()
+                error_detail = error_json.get("detail", "No detail provided")
+            except ValueError:
+                # If response is not JSON or doesn't contain 'detail', use the text
+                error_detail = response.text or "No detail provided"
+            raise APIRequestError(
+                f"HTTP error occurred: {http_err} - Detail: {error_detail}"
+            ) from http_err
+        except requests.exceptions.RequestException as req_err:
+            # For non-HTTP exceptions, just pass the exception message
+            raise APIRequestError(f"Request error occurred: {req_err}") from req_err
 
     def complete(
         self,
