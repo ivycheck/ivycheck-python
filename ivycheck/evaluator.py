@@ -26,6 +26,9 @@ class Evaluator:
         )
         self._prepare_evaluation_dataset()
 
+        if self.client.print_output:
+            print(f"Evaluation URL: {self.eval_url}")
+
     @classmethod
     def create(
         cls,

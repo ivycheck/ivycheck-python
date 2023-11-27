@@ -9,8 +9,9 @@ from ivycheck.helperfunctions import APIRequestError
 
 # https://ivycheck-backend.onrender.com/
 class IvyClient:
-    def __init__(self, api_key=None, base_url=None) -> None:
+    def __init__(self, api_key=None, base_url=None, print_output=True) -> None:
         self.base_url = base_url
+        self.print_output = print_output
 
         if api_key is None:
             api_key = os.getenv("IVYCHECK_API_KEY")

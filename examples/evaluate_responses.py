@@ -11,7 +11,6 @@ evaluator = test_dataset.evaluate("ChatBot Evaluation")
 #     test_dataset_id=test_dataset.id,
 #     evaluator_description="ChatBot Evaluation 1",
 # )
-print(evaluator.eval_url)
 
 for test_case, evaluate in evaluator.test_case_iterator():
     # Custom logic to execute the test case using the test case's properties
