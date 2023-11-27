@@ -77,11 +77,12 @@ class Evaluator:
 
     def _make_evaluate_func(self, test_case_id):
         # Create function that captures the test case ID and takes a response as its only argument
-        def evaluate_func(response: str):
+        def evaluate_func(response: str, run_in_background=True):
             self.client.Evaluation.create_and_run(
                 evaluation_dataset_id=self.evaluation_dataset_id,
                 test_case_id=test_case_id,
                 output={"response": response},
+                run_in_background=run_in_background,
             )
 
         return evaluate_func

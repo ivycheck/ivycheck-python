@@ -19,6 +19,7 @@ class EvaluationClient:
         output: Dict,
         evaluation_result: Optional[Dict] = None,
         config: Optional[Dict] = None,
+        run_in_background: bool = True,
     ):
         evaluation_data = EvaluationCreate(
             test_case_id=test_case_id,
@@ -27,9 +28,16 @@ class EvaluationClient:
             evaluation_result=evaluation_result,
             output=output,
         )
+
+        params = {"run_in_background": run_in_background}
+
         endpoint = f"/evaluations/create_and_run/"
+
         response = self.client._make_request(
-            "POST", endpoint, json=evaluation_data.model_dump(exclude_none=True)
+            "POST",
+            endpoint,
+            json=evaluation_data.model_dump(exclude_none=True),
+            params=params,
         )
 
         # Store the evaluation-related properties after creation.
