@@ -16,3 +16,4 @@ packaging-env
 
 # test
 tests/test_openai.py
+tests/old*

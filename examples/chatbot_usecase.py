@@ -10,8 +10,8 @@ test_dataset = ivy.TestDataset.create(
     project_id="7a89104c-0d07-4396-a144-21c0c096622a",  # Admin Org
     # project_id="12caf8c1-5bc9-4fb6-827e-ffecff35afb2",  # Test Org
     eval_llm="gpt-4",
-    name="Test ChatBot 9",
-    description="Test Dataset 9",
+    name="Test ChatBot 10",
+    description="Test Dataset 10",
     rubrics=[
         {
             "name": "Politeness",
