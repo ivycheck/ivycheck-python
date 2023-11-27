@@ -26,6 +26,9 @@ class Evaluator:
         )
         self._prepare_evaluation_dataset()
 
+        if self.client.print_output:
+            print(f"Evaluation URL: {self.eval_url}")
+
     @classmethod
     def create(
         cls,
@@ -35,6 +38,23 @@ class Evaluator:
         evaluator_description: Optional[str] = None,
     ):
         return cls(client, test_dataset_id, segments, evaluator_description)
+
+    @property
+    def eval_url(self):
+        if self.evaluation_dataset_id is None:
+            raise ValueError("Evaluation Dataset ID has not been set.")
+        else:
+            return self.client._make_request(
+                "GET", f"/evaluation_datasets/url/{self.evaluation_dataset_id}"
+            )
+
+    # construct URL from project ID and evaluation dataset ID intead of calling endpoing
+    # @property
+    # def eval_url(self):
+    #     if self.evaluation_dataset_id is None:
+    #         raise ValueError("Evaluation Dataset ID has not been set.")
+    #     else:
+    #         return f"https://app.ivycheck.com/projects/{self.client.TestDataset.project_id}/evals/{self.evaluation_dataset_id}"
 
     def _prepare_evaluation_dataset(self):
         # Reads the test dataset and creates the evaluation dataset
