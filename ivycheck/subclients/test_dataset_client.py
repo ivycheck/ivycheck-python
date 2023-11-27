@@ -40,6 +40,7 @@ class TestDatasetClient:
             "POST", "/test_case_datasets/", json=validated_data
         )
 
+        self.project_id = project_id
         self.id = response["id"]
         self.name = response.get("name")
         self.description = response.get("description")
@@ -60,6 +61,7 @@ class TestDatasetClient:
             segments=segments,
             evaluator_description=evaluator_description,
         )
+
         return evaluator
 
     def add_test_case(
@@ -150,6 +152,7 @@ class TestDatasetClient:
         self.name = data.get("name")
         self.description = data.get("description")
         self.test_config = data.get("test_config")
+        self.project_id = data.get("prompt_id")
 
         # Return the TestDatasetClient instance for method chaining
         return self
