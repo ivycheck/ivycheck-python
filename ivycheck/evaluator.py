@@ -40,7 +40,7 @@ class Evaluator:
         return cls(client, test_dataset_id, segments, evaluator_description)
 
     @property
-    def eval_url_from_endpoint(self):
+    def eval_url(self):
         if self.evaluation_dataset_id is None:
             raise ValueError("Evaluation Dataset ID has not been set.")
         else:
@@ -48,12 +48,13 @@ class Evaluator:
                 "GET", f"/evaluation_datasets/url/{self.evaluation_dataset_id}"
             )
 
-    @property
-    def eval_url(self):
-        if self.evaluation_dataset_id is None:
-            raise ValueError("Evaluation Dataset ID has not been set.")
-        else:
-            return f"https://app.ivycheck.com/projects/{self.client.TestDataset.project_id}/evals/{self.evaluation_dataset_id}"
+    # construct URL from project ID and evaluation dataset ID intead of calling endpoing
+    # @property
+    # def eval_url(self):
+    #     if self.evaluation_dataset_id is None:
+    #         raise ValueError("Evaluation Dataset ID has not been set.")
+    #     else:
+    #         return f"https://app.ivycheck.com/projects/{self.client.TestDataset.project_id}/evals/{self.evaluation_dataset_id}"
 
     def _prepare_evaluation_dataset(self):
         # Reads the test dataset and creates the evaluation dataset
