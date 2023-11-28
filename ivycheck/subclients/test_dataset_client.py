@@ -25,6 +25,8 @@ class TestDatasetClient:
         else:
             test_config["rubrics"] = {}
 
+        test_config = self._format_test_config(test_config)
+
         # Use the Pydantic model to validate the input
         dataset_info = TestCaseDatasetCreate(
             prompt_id=project_id,  # mapping to old field name
@@ -99,6 +101,25 @@ class TestDatasetClient:
         endpoint = f"/test_case_datasets/{dataset_id}"
         return self.client._make_request("DELETE", endpoint)
 
+    def add_rubric(self, name: str, instruction: str):
+        test_config = self.test_config
+        rubrics = test_config.get("rubrics", [])
+        rubrics.append({"name": name, "description": instruction})
+        test_config["rubrics"] = rubrics
+        self.update(test_config=test_config)
+
+    def delete_rubric(self, name: str):
+        test_config = self.test_config
+        rubrics = test_config.get("rubrics", [])
+        rubrics = [rubric for rubric in rubrics if rubric["name"] != name]
+        test_config["rubrics"] = rubrics
+        self.update(test_config=test_config)
+
+    def set_eval_llm(self, eval_llm: str):
+        test_config = self.test_config
+        test_config["eval_llm"] = eval_llm
+        self.update(test_config=test_config)
+
     def update(
         self,
         test_config: Optional[Dict] = None,
@@ -111,9 +132,9 @@ class TestDatasetClient:
             raise ValueError("Dataset ID has not been set.")
 
         test_case_data = TestCaseDatasetUpdate(
-            test_config=test_config,
-            name=name,
-            description=description,
+            test_config=test_config or self.test_config,
+            name=name or self.name,
+            description=description or self.description,
         )
         json_data = test_case_data.model_dump(exclude_unset=True)
         endpoint = f"/test_case_datasets/{self.id}"
@@ -156,3 +177,12 @@ class TestDatasetClient:
 
         # Return the TestDatasetClient instance for method chaining
         return self
+
+    @classmethod
+    def _format_test_config(cls, test_config):
+        """Rename the instruction field to description for backend compatibility"""
+        if "rubrics" in test_config:
+            for rubric in test_config["rubrics"]:
+                if "instruction" in rubric:
+                    rubric["description"] = rubric.pop("instruction")
+        return test_config
