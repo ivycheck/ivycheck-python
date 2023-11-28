@@ -22,8 +22,8 @@ def common_dataset_payload():
         "name": "Test ChatBot Data",
         "description": "Our standard test cases for ChatBot evaluation",
         "rubrics": [
-            {"name": "Politeness", "description": "Is the response polite?"},
-            {"name": "Humour", "description": "Is the response funny or entertaining?"},
+            {"name": "Politeness", "instruction": "Is the response polite?"},
+            {"name": "Humour", "instruction": "Is the response funny or entertaining?"},
         ],
     }
 

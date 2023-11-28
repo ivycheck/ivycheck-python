@@ -3,7 +3,7 @@ from ivycheck.ivy_client import IvyClient
 
 # Create an Evaluator object for a given test dataset with an optional segments filter
 ivy = IvyClient(api_key=os.environ["IVYCHECK_API_KEY"])
-test_dataset = ivy.TestDataset.load("bea75426-8c2a-42c8-b23e-7edac23cffd1")
+test_dataset = ivy.TestDataset.load("87a1f599-2841-46bb-9b27-02de20b456f0")
 
 evaluator = test_dataset.evaluate("ChatBot Evaluation")
 # evaluator = Evaluator.create(
