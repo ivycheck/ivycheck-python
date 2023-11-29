@@ -131,7 +131,7 @@ class Evaluator:
             self.client.Evaluation.create_and_run(
                 evaluation_dataset_id=self.evaluation_dataset_id,
                 test_case_id=test_case_id,
-                output={"response": response},
+                output=response,
                 run_in_background=run_in_background,
             )
 
