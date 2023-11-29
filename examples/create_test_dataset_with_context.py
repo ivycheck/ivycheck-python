@@ -12,44 +12,29 @@ test_dataset = ivy.TestDataset.create(
     eval_llm="gpt-4",
     name="Test ChatBot with context",
     description="Our standard test cases for ChatBot evaluation",
-    rubrics=[
-        {
-            "name": "Politeness",
-            "instruction": "Is the response polite?",
-        },
-    ],
 )
 
 test_dataset.add_rubric(
-    name="Accuracy",
-    instruction="Is the response similar to the provided golden answer?",
-)
-test_dataset.add_rubric(
-    name="Correct Context Usage",
-    instruction="Does the response only contain data from the provided context or does it add any additional information?",
+    name="Precision",
+    instruction="Does the response provide only information that is given in the golden answer?",
 )
 
+test_dataset.add_rubric(
+    name="Completeness",
+    instruction="Does the response contain all information provided in the golden answer?",
+)
 
 # Add test cases to the dataset
 test_dataset.add_test_case(
     input={"user_input": "How can I cancel my subscription online?"},
     segments={"customer": "ChatBotUser", "difficulty": "easy"},
     golden_answer="You can cancel your subscription online by going to the 'My Account' page and clicking on the 'Cancel Subscription' button.",
-    context=[
-        {
-            "title": "How to cancel your subscription",
-            "url": "https://example.com/cancel-subscription",
-            "snippet": "You can cancel your subscription online by going to the 'Manage Account' page and clicking on the 'Cancel Subscription' button.",
-        }
-    ],
 )
 
 evaluator = test_dataset.evaluate("ChatBot Evaluation")
 
 for test_case, evaluate in evaluator.test_case_iterator():
     # Custom logic to execute the test case using the test case's properties
-
-    # Implement test case execution and response generation
     response = (
         "You can cancel your subscription by calling a customer service representative."
     )

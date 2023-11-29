@@ -52,7 +52,7 @@ class TestDatasetClient:
         if rubrics is not None:
             test_config["rubrics"] = rubrics
         else:
-            test_config["rubrics"] = {}
+            test_config["rubrics"] = []
 
         test_config = self._format_test_config(test_config)
 
