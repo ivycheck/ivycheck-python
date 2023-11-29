@@ -4,6 +4,7 @@ from .subclients.test_case_client import TestCaseClient
 from .subclients.test_dataset_client import TestDatasetClient
 from .subclients.evaluation_client import EvaluationClient
 from .subclients.evaluation_dataset_client import EvaluationDatasetClient
+from .subclients.prompt_client import PromptClient
 from ivycheck.helperfunctions import APIRequestError
 
 
@@ -36,20 +37,24 @@ class IvyClient:
         self.session = requests.Session()
         self.session.headers.update({"Authorization": f"Bearer {self.api_key}"})
 
-        # Initialie the differen subclients
+        # Initialize the different subclients
         self.TestDataset = TestDatasetClient(self)
         self.TestCase = TestCaseClient(self)
         self.Evaluation = EvaluationClient(self)
         self.EvaluationDataset = EvaluationDatasetClient(self)
+        self.Prompt = PromptClient(self)
 
-    def _make_request(self, method: str, endpoint: str, **kwargs):
+    def _make_request(self, method: str, endpoint: str, stream=False, **kwargs):
         # Internal helper method to make HTTP requests
         url = f"{self.base_url}{endpoint}"
         response = self.session.request(method, url, **kwargs)
 
         try:
             response.raise_for_status()  # Raise an exception for HTTP errors
-            return response.json()
+            if stream:
+                return response.iter_content(decode_unicode=True)
+            else:
+                return response.json()
         except requests.exceptions.HTTPError as http_err:
             # Attempt to extract error details from the response
             try:
