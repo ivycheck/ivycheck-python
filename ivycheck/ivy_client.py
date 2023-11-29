@@ -1,4 +1,5 @@
 import os
+from typing import Optional
 import requests
 from .subclients.test_case_client import TestCaseClient
 from .subclients.test_dataset_client import TestDatasetClient
@@ -10,7 +11,21 @@ from ivycheck.helperfunctions import APIRequestError
 
 # https://ivycheck-backend.onrender.com/
 class IvyClient:
-    def __init__(self, api_key=None, base_url=None, print_output=True) -> None:
+    """
+    The main client class for interacting with the IvyCheck API.
+    """
+
+    def __init__(
+        self,
+        api_key: Optional[str] = None,
+        base_url: Optional[str] = None,
+        print_output: bool = True,
+    ) -> None:
+        """
+        :param api_key: The IvyCheck API key
+        :param base_url: The base URL of the IvyCheck API. Defaults to the production API.
+        :param print_output: Whether to print output to the console. Defaults to `True`.
+        """
         self.base_url = base_url
         self.print_output = print_output
 
