@@ -3,6 +3,10 @@ from typing import Optional, Dict
 
 
 class EvaluationClient:
+    """
+    Provides an interface to create, read, and delete evaluations.
+    """
+
     def __init__(self, client):
         self.client = client
         self.id = None
@@ -16,17 +20,25 @@ class EvaluationClient:
         self,
         test_case_id: str,
         evaluation_dataset_id: str,
-        output: Dict,
-        evaluation_result: Optional[Dict] = None,
-        config: Optional[Dict] = None,
+        output: str,
+        # evaluation_result: Optional[Dict] = None,
+        # config: Optional[Dict] = None,
         run_in_background: bool = True,
     ):
+        """
+        Submit an LLM output for evaluation.
+
+        :param test_case_id: The ID of the executed test case.
+        :param evaluation_dataset_id: The ID of the evaluation dataset to add this evaluation to.
+        :param output: The output of the LLM.
+        :param run_in_background: Whether to run the evaluation in the background. Default: `True`. If set to `False`, the evaluation will be run synchronously and the response will contain the evaluation result.
+        """
         evaluation_data = EvaluationCreate(
             test_case_id=test_case_id,
             evaluation_dataset_id=evaluation_dataset_id,
-            config=config,
-            evaluation_result=evaluation_result,
-            output=output,
+            # config=config,
+            # evaluation_result=evaluation_result,
+            output={"response": output},
         )
 
         params = {"run_in_background": run_in_background}
@@ -57,7 +69,7 @@ class EvaluationClient:
         endpoint = f"/evaluations/{evaluation_id}"
         return self.client._make_request("GET", endpoint)
 
-    def update(
+    def _update(
         self,
         evaluation_id: Optional[str] = None,
         test_case_id: Optional[str] = None,
@@ -96,8 +108,13 @@ class EvaluationClient:
 
         return self
 
-    def delete(self, evaluation_id: Optional[str] = None):
-        evaluation_id = evaluation_id or self.id
+    def delete(self, evaluation_id: str):
+        """
+        Delete an evaluation.
+
+        :param evaluation_id: The ID of the evaluation to delete.
+        """
+        # evaluation_id = evaluation_id or self.id
         if not evaluation_id:
             raise ValueError("Evaluation ID has not been set or provided.")
         endpoint = f"/evaluations/{evaluation_id}"
@@ -106,6 +123,11 @@ class EvaluationClient:
         self.id = None
 
     def load(self, evaluation_id: Optional[str] = None):
+        """
+        Load an evaluation.
+
+        :param evaluation_id: The ID of the evaluation to load.
+        """
         evaluation_id = evaluation_id or self.id
         if not evaluation_id:
             raise ValueError("Evaluation ID has not been set or provided.")
