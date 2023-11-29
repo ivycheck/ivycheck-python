@@ -73,7 +73,7 @@ class Evaluator:
         test_dataset = self.client.TestDataset._read(
             testdataset_id=self.test_dataset_id
         )
-        evals = self.client.EvaluationDataset.create(
+        evals = self.client.EvaluationDataset._create(
             test_case_dataset_id=self.test_dataset_id,
             description=self.evaluator_description,
             aggregate_results={
