@@ -16,6 +16,35 @@ class TestDatasetClient:
         name: Optional[str] = None,
         description: Optional[str] = None,
     ):
+        """
+        Create a new test dataset inside an existing project.
+
+        Example:
+        ```python
+        test_dataset = ivy.TestDataset.create(
+            project_id="abcdef",
+            eval_llm="gpt-4",
+            name="Test ChatBot with rubric instructions",
+            description="Our standard test cases for ChatBot evaluation",
+            rubrics=[
+                {
+                    "name": "Politeness",
+                    "instruction": "Is the response polite?",
+                },
+                {
+                    "name": "Humour",
+                    "instruction": "Is the response funny or entertaining?",
+                },
+            ],
+        )
+        ```
+
+        :param project_id: The ID of the project to create the test dataset in.
+        :param eval_llm: The LLM to use for evaluation.
+        :param rubrics: The rubrics to use for evaluation. A dictionary of rubric names and instructions. Example: `[{"name": "Accuracy", "instruction": "Is the response accurate?"}]`
+        :param name: The name of the test dataset.
+        :param description: The description of the test dataset.
+        """
         assert project_id is not None, "Project Id is required."
 
         test_config = {}
@@ -53,6 +82,12 @@ class TestDatasetClient:
     def evaluate(
         self, evaluator_description: str = None, segments: Optional[Dict] = None
     ):
+        """
+        Create an [Evaluator](#evaluator) object for this test dataset. After creating the evaluator, you can use the [`test_case_iterator`](#test-case-iterator) method to iterate over the test cases and evaluate them.
+
+        :param evaluator_description: The description of the evaluation. Use it to describe what you are evaluating.
+        :param segments: A dictionary of segments to filter the test cases. Example: `{"customer": "Amazon"}`
+        """
         if not self.id:
             raise ValueError("Dataset ID is not set.")
 
@@ -79,6 +114,21 @@ class TestDatasetClient:
         """
         Add a test case to this dataset.
 
+        Example:
+        ```python
+        test_dataset.add_test_case(
+            input={"user_input": "How can I cancel my subscription online?"},
+            segments={"customer": "ChatBotUser", "difficulty": "easy"},
+        )
+        ```
+
+        :param input: The input to the model. Example: `{"user_input": "How can I cancel my subscription online?"}`
+        :param message_history: The message history of the conversation. Example: `[{"role": "system", "content": "You are a helpful assistant."}]`
+        :param context: Additional context of the conversation. Can contain retrieved documents provided as list of dictionaries. Example: `[{"title": "How to cancel your subscription", "url": "https://example.com/cancel-subscription"}]`
+        :param golden_answer: The golden answer for the test case. This is the correct response to the input.
+        :param golden_context: The golden context for the test case. This is the expected context for the input. Useful if you want to evaluate if the system retrieved the correct documents.
+        :param segments: A dictionary of segments to filter the test cases. Example: `{"customer": "Amazon"}`
+        :param info: Any additional information to store with the test case.
         """
         # Here, we assume self has an attribute `id` that stores the ID of the dataset.
         # If this is not currently the case, you need to make sure each instance of
@@ -94,14 +144,25 @@ class TestDatasetClient:
             info=info,
         )
 
-    def delete(self, testdataset_id: str = None):
-        dataset_id = testdataset_id or self.id
-        if not dataset_id:
+    def delete(self, testdataset_id: str):
+        """
+        Delete a test case dataset.
+
+        :param testdataset_id: The ID of the test dataset to delete.
+        """
+        # dataset_id = testdataset_id or self.id
+        if not testdataset_id:
             raise ValueError("Dataset ID has not been set or provided.")
-        endpoint = f"/test_case_datasets/{dataset_id}"
+        endpoint = f"/test_case_datasets/{testdataset_id}"
         return self.client._make_request("DELETE", endpoint)
 
     def add_rubric(self, name: str, instruction: str):
+        """
+        Add an evaluation rubric to this test dataset.
+
+        :param name: The name of the rubric.
+        :param instruction: The instruction for how to evaluate the rubric.
+        """
         test_config = self.test_config
         rubrics = test_config.get("rubrics", [])
         rubrics.append({"name": name, "description": instruction})
@@ -109,6 +170,11 @@ class TestDatasetClient:
         self.update(test_config=test_config)
 
     def delete_rubric(self, name: str):
+        """
+        Delete an evaluation rubric from this test dataset.
+
+        :param name: The name of the rubric to delete.
+        """
         test_config = self.test_config
         rubrics = test_config.get("rubrics", [])
         rubrics = [rubric for rubric in rubrics if rubric["name"] != name]
@@ -116,6 +182,11 @@ class TestDatasetClient:
         self.update(test_config=test_config)
 
     def set_eval_llm(self, eval_llm: str):
+        """
+        Set the LLM to use for evaluation.
+
+        :param eval_llm: The LLM to use for evaluation. Example: `gpt-4`
+        """
         test_config = self.test_config
         test_config["eval_llm"] = eval_llm
         self.update(test_config=test_config)
@@ -125,10 +196,18 @@ class TestDatasetClient:
         test_config: Optional[Dict] = None,
         name: Optional[str] = None,
         description: Optional[str] = None,
-        testdataset_id: str = None,
+        testdataset_id: Optional[str] = None,
     ):
+        """
+        Update this test dataset.
+
+        :param test_config: The test config to update. Example: `{"eval_llm": "gpt-4"}`
+        :param name: The name of the test dataset.
+        :param description: The description of the test dataset.
+        :param testdataset_id: The ID of the test dataset to update.
+        """
         dataset_id = testdataset_id or self.id
-        if not self.id:
+        if not dataset_id:
             raise ValueError("Dataset ID has not been set.")
 
         test_case_data = TestCaseDatasetUpdate(

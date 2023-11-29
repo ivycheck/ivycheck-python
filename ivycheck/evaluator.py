@@ -9,6 +9,10 @@ if TYPE_CHECKING:
 
 
 class Evaluator:
+    """
+    Provides an interface to iterate over test cases of a dataset and submit the results to IvyCheck for evaluation.
+    """
+
     def __init__(
         self,
         client,
@@ -16,6 +20,14 @@ class Evaluator:
         segments: Optional[Dict] = None,
         evaluator_description: Optional[str] = None,
     ):
+        """
+        Initializes the Evaluator object.
+
+        :param client: An instance of IvyClient
+        :param test_dataset_id: ID of the test dataset to evaluate
+        :param segments: Optional filter to only evaluate test cases that match the segments
+        :param evaluator_description: Description of the evaluation dataset
+        """
         self.client = client
         self.test_dataset_id = test_dataset_id
         self.segments = segments
@@ -85,13 +97,31 @@ class Evaluator:
 
     def _test_case_matches_segments(self, test_case):
         # Implement the logic to check if a test case matches the segments filter
+        if not self.segments:
+            return True
         for key, value in self.segments.items():
             if test_case["segments"].get(key) != value:
                 return False
         return True
 
     def test_case_iterator(self):
-        # Iterator for test cases that yields a tuple containing the test case data and a method to evaluate it
+        """
+        Iterator for test cases that yields a tuple containing the test case data and a method to evaluate it.
+
+        Example usage:
+        ```python
+        test_dataset = ivy.TestDataset.load("abc-def")
+
+        evaluator = test_dataset.evaluate("ChatBot Evaluation")
+
+        for test_case, evaluate in evaluator.test_case_iterator():
+            user_input = test_case["input"]["user_input"]
+            response = custom_llm(user_input)
+            evaluate(response, run_in_background=True)
+        ```
+        """
+        if not self.test_cases:
+            raise ValueError("Test cases have not been loaded.")
         for test_case in self.test_cases:
             yield (test_case, self._make_evaluate_func(test_case["id"]))
 
