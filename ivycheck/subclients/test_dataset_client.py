@@ -12,7 +12,7 @@ class TestDatasetClient:
         self,
         project_id: str,
         eval_llm: str = "gpt-4",
-        rubrics: Optional[Dict[str, str]] = None,
+        rubrics: List[Dict[str, str]] = [],
         name: Optional[str] = None,
         description: Optional[str] = None,
     ):

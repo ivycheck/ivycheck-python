@@ -64,3 +64,20 @@ class EvaluationDatasetCreate(EvaluationDatasetBase):
 
 class EvaluationDatasetUpdate(EvaluationDatasetBase):
     pass
+
+
+class PromptExecutionBase(BaseModel):
+    prompt_id: Optional[str] = None
+    prompt_version_id: Optional[str] = None
+    input: Optional[Dict] = None
+    messages: Optional[list] = None
+    context: Optional[list] = None
+    segments: Optional[dict] = None
+    llm_model_params: Optional[Dict] = None
+    output: Optional[str] = None
+    metrics: Optional[Dict] = None
+    info: Optional[dict] = None
+
+
+class PromptExecutionCreate(PromptExecutionBase):
+    pass
