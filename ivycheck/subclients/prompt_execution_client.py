@@ -4,7 +4,7 @@ from ..schemas import PromptExecutionCreate
 
 class PromptExecutionClient:
     """
-    Provides an interface to create, read, and delete prompt executions.
+    Provides an interface to create prompt executions.
     """
 
     def __init__(self, client):
