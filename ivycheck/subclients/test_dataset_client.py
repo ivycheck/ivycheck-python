@@ -12,7 +12,7 @@ class TestDatasetClient:
         self,
         project_id: str,
         eval_llm: str = "gpt-4",
-        rubrics: Optional[Dict[str, str]] = None,
+        rubrics: List[Dict[str, str]] = [],
         name: Optional[str] = None,
         description: Optional[str] = None,
     ):
@@ -49,10 +49,7 @@ class TestDatasetClient:
 
         test_config = {}
         test_config["eval_llm"] = eval_llm  # get_llm_config_id_from_name(eval_llm)
-        if rubrics is not None:
-            test_config["rubrics"] = rubrics
-        else:
-            test_config["rubrics"] = []
+        test_config["rubrics"] = rubrics
 
         test_config = self._format_test_config(test_config)
 

@@ -4,6 +4,7 @@ import requests
 from .subclients.test_case_client import TestCaseClient
 from .subclients.test_dataset_client import TestDatasetClient
 from .subclients.evaluation_client import EvaluationClient
+from .subclients.prompt_execution_client import PromptExecutionClient
 from .subclients.evaluation_dataset_client import EvaluationDatasetClient
 from .subclients.prompt_client import PromptClient
 from ivycheck.helperfunctions import APIRequestError
@@ -58,6 +59,7 @@ class IvyClient:
         self.Evaluation = EvaluationClient(self)
         self.EvaluationDataset = EvaluationDatasetClient(self)
         self.Prompt = PromptClient(self)
+        self.PromptExecution = PromptExecutionClient(self)
 
     def _make_request(self, method: str, endpoint: str, stream=False, **kwargs):
         # Internal helper method to make HTTP requests
