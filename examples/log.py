@@ -18,4 +18,6 @@ ivy.PromptExecution.create(
     ],
     output="Call customer service.",
     metrics={"full_request": 0.5},
+    auto_eval=True,
+    run_eval_in_background=True,
 )

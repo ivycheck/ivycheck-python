@@ -21,6 +21,8 @@ class PromptExecutionClient:
         segments: Optional[dict] = None,
         metrics: Optional[dict] = None,
         info: Optional[dict] = None,
+        auto_eval: Optional[bool] = False,
+        run_eval_in_background: Optional[bool] = True,
     ):
         """
         Create a new prompt execution in the log.
@@ -68,7 +70,13 @@ class PromptExecutionClient:
         )
         validated_data = prompt_execution_data.model_dump(exclude_none=True)
         response = self.client._make_request(
-            "POST", "/prompt_executions/", json=validated_data
+            "POST",
+            "/prompt_executions/",
+            json=validated_data,
+            params={
+                "auto_eval": auto_eval,
+                "run_eval_in_background": run_eval_in_background,
+            },
         )
 
         # self.project_id = project_id
