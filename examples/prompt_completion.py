@@ -6,10 +6,10 @@ ivy = IvyClient(
 )
 
 chat_response = ivy.Prompt.complete(
-    project_id="7af0b776-12e6-4fac-8526-d95c121664de",
-    prompt_version=2,
-    field_values={"user_input": "It's raining cats and dogs!"},
-    stream=True,  # get streaming response
+    project_id="<your-project-id>",
+    prompt_version=1,
+    # field_values={"user_input": "It's raining cats and dogs!"},
+    stream=False,  # get streaming response
 )
 
 assert type(chat_response) is str
